@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "fields.h"
+#include "jval.h"
+#include "jrb.h"
+#include "dllist.h"
+
+int main(int argc, char **argv)
+{
+  IS is;
+  Dllist kelimeler;
+  Dllist kodlar;
+  Dllist tmp;
+  JRB encodeTree;
+  JRB decodeTree;
+  JRB tmp2;
+  char *kelime;
+  
+
+  // Yeni bir dosya okuyucusu tanımla
+  is = new_inputstruct(argv[2]); // NULL --> stdin
+  kodlar = new_dllist();
+  kelimeler = new_dllist();
+  encodeTree = make_jrb();
+  decodeTree = make_jrb();
+                                            
+  while(get_line(is) >= 0) {
+      for(int i = 0; i < is->NF; i++) {
+	  kelime = strtok(is->fields[i], ":");
+	  kelime = strtok(kelime, "\"");
+	  if(i != 0 || i != (is->NF-1))
+	    if(i%2 == 0)
+	      dll_append(kelimeler, new_jval_s(strdup(kelime)));
+	    else
+	      dll_append(kodlar, new_jval_s(strdup(kelime)));
+	  //printf("%s\n", kelime);
+      }
+	
+
+      if(argv[1] == "-e") {
+	jrb_insert_str(encodeTree, kelimeler->val.s, kodlar->val);
+	
+      }
+      if(argv[1] == "-d") {
+	jrb_insert_str(decodeTree, kodlar->val.s, kelimeler->val);
+
+      }
+
+      kelimeler = kelimeler->flink;
+      kodlar = kodlar->flink;
+      
+      //}
+    /*
+    if(is->NF > 2)
+      printf("İkinci kelime: %s\n", is->fields[1]);
+    else
+      printf("İkinci kelime yok\n");
+    */
+  }
+
+  
+  //printf("Kelime sayısı: %d\n", is->NF);
+  dll_traverse(tmp, kelimeler) printf(" %s", tmp->val.s);
+  dll_traverse(tmp, kodlar) printf(" %s", tmp->val.s);
+    //printf("%s", Jval dll_val( );
+  //for(int i = 0; i < 3; i++) {
+  //  l = l->flink;
+  //}
+  if(argv[1] == "-e") {
+    jrb_traverse(tmp2, encodeTree) {
+      printf("%-40s %2s\n", tmp2->key.s, tmp2->val);
+    }
+  }
+
+  if(argv[1] == "-d") {
+    jrb_traverse(tmp2, decodeTree) {
+      printf("%-40s %2s\n", tmp2->key.s, tmp2->val);
+    }
+  }
+  
+
+  //printf("%s", l->val.s);
+  
+    
+  
+  // Çıkmadan önce bellekte kullanılan yerlerin geri bırakılması
+  jettison_inputstruct(is);
+  return 0;
+}
