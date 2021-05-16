@@ -9,8 +9,8 @@ Proje Üyeleri
 
 Çalışma Komutları: 
 - $make
-- $./kripto -d encripted DornekDosyasi
-- $./kripto -e decripted EornekDosyasi 
+- $./kripto -d encripted DornekCikisDosyasi
+- $./kripto -e decripted EornekCikisDosyasi 
 
 Eksikler: 
 - Örnek metin dosyasında satır işlemlerini yapamadık bu yüzden kelimeleri bir boşluk ara ile yan yana yazdık.
